@@ -66,6 +66,7 @@
 			default:
 				break;
 		}
+		operator = null;
 	}
 
 	function operate(newOperator: Operator): void {
