@@ -73,7 +73,7 @@
 			calculate();
 		}
 		operator = newOperator;
-		previousValue = currentValue;
+		previousValue = Number(currentValueString);
 		waitingForNewValue = true;
 	}
 </script>
