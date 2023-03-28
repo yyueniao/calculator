@@ -1,7 +1,11 @@
 <script lang="ts">
 	type Operator = "+" | "-" | "*" | "/";
+
 	let currentValueString = "0";
+	let previousValue: number | null = null;
+	let operator: Operator;
 	let waitingForNewValue: boolean = true;
+
 	$: currentValue = Number(currentValueString);
 	$: if (currentValueString === "0") {
 		waitingForNewValue = true;
@@ -39,9 +43,19 @@
 		}
 	}
 
-	function calculate(): void {}
+	function calculate(): void {
+		// TODO: implement this method
+		console.log(`Calculating ${previousValue} ${operator} ${currentValue}`);
+	}
 
-	function operate(newOperator: Operator): void {}
+	function operate(newOperator: Operator): void {
+		if (operator && previousValue) {
+			calculate();
+		}
+		operator = newOperator;
+		previousValue = currentValue;
+		waitingForNewValue = true;
+	}
 </script>
 
 <div class="calculator">
