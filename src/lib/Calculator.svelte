@@ -46,8 +46,26 @@
 	}
 
 	function calculate(): void {
-		// TODO: implement this method
+		// TODO: handle continuous calculation (e.g. keep pressing equal)
 		console.log(`Calculating ${previousValue} ${operator} ${currentValue}`);
+		switch (operator) {
+			case "+":
+				currentValueString = String(previousValue + currentValue);
+				break;
+			case "-":
+				// TODO: handle negative numbers
+				currentValueString = String(previousValue - currentValue);
+				break;
+			case "*":
+				currentValueString = String(previousValue * currentValue);
+				break;
+			case "/":
+				// TODO: handle devide by zero
+				currentValueString = String(previousValue / currentValue);
+				break;
+			default:
+				break;
+		}
 	}
 
 	function operate(newOperator: Operator): void {
