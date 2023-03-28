@@ -3,7 +3,7 @@
 
 	let currentValueString = "0";
 	let previousValue: number | null = null;
-	let operator: Operator;
+	let operator: Operator | null = null;
 	let waitingForNewValue: boolean = true;
 
 	$: currentValue = Number(currentValueString);
@@ -13,6 +13,8 @@
 
 	function clear(): void {
 		currentValueString = "0";
+		previousValue = null;
+		operator = null;
 	}
 
 	function backSpace(): void {
