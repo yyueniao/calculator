@@ -67,6 +67,7 @@
 				break;
 		}
 		operator = null;
+		waitingForNewValue = true;
 	}
 
 	function operate(newOperator: Operator): void {
