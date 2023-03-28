@@ -1,9 +1,10 @@
 <script lang="ts">
 	type Operator = "+" | "-" | "*" | "/";
 	let currentValueString = "0";
+	let waitingForNewValue: boolean = true;
 	$: currentValue = Number(currentValueString);
-	$: if (currentValueString === "") {
-		currentValueString = "0";
+	$: if (currentValueString === "0") {
+		waitingForNewValue = true;
 	}
 
 	function clear(): void {
@@ -15,22 +16,32 @@
 			0,
 			currentValueString.length - 1
 		);
+		if (currentValueString === "") {
+			currentValueString = "0";
+		}
 	}
 
-	function operate(operator: Operator): void {}
+	function append(value: string): void {
+		currentValueString += value;
+		waitingForNewValue = false;
+	}
 
 	function inputDigit(value: number): void {
-		currentValueString =
-			currentValueString === "0"
-				? String(value)
-				: currentValueString + String(value);
+		if (waitingForNewValue) {
+			currentValueString = "";
+		}
+		append(String(value));
 	}
 
 	function addDecimal(): void {
-		currentValueString += currentValueString.includes(".") ? "" : ".";
+		if (!currentValueString.includes(".")) {
+			append(".");
+		}
 	}
 
 	function calculate(): void {}
+
+	function operate(newOperator: Operator): void {}
 </script>
 
 <div class="calculator">
