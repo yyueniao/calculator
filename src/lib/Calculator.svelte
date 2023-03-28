@@ -1,22 +1,41 @@
 <script lang="ts">
 	type Operator = "+" | "-" | "*" | "/";
+	let currentValueString = "0";
+	$: currentValue = Number(currentValueString);
+	$: if (currentValueString === "") {
+		currentValueString = "0";
+	}
 
-	function clear(): void {}
+	function clear(): void {
+		currentValueString = "0";
+	}
 
-	function backSpace(): void {}
+	function backSpace(): void {
+		currentValueString = currentValueString.slice(
+			0,
+			currentValueString.length - 1
+		);
+	}
 
 	function operate(operator: Operator): void {}
 
-	function inputDigit(value: number): void {}
+	function inputDigit(value: number): void {
+		currentValueString =
+			currentValueString === "0"
+				? String(value)
+				: currentValueString + String(value);
+	}
 
-	function addDecimal(): void {}
+	function addDecimal(): void {
+		currentValueString += currentValueString.includes(".") ? "" : ".";
+	}
 
 	function calculate(): void {}
 </script>
 
 <div class="calculator">
 	<div class="display">
-		{0}
+		{currentValueString}
 	</div>
 	<div class="buttons">
 		<button class="large" on:click={clear}>C</button>
@@ -25,7 +44,7 @@
 		<button on:click={() => inputDigit(7)}>7</button>
 		<button on:click={() => inputDigit(8)}>8</button>
 		<button on:click={() => inputDigit(9)}>9</button>
-		<button class="operator" on:click={() => operate("*")}>×</button>
+		<button class="operator" on:click={() => operate("*")}>x</button>
 		<button on:click={() => inputDigit(4)}>4</button>
 		<button on:click={() => inputDigit(5)}>5</button>
 		<button on:click={() => inputDigit(6)}>6</button>
