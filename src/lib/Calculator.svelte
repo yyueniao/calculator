@@ -5,16 +5,32 @@
 	let previousValue: number | null = null;
 	let operator: Operator | null = null;
 	let waitingForNewValue: boolean = true;
+	let errorMessage: string | null = null;
 
 	$: currentValue = Number(currentValueString);
-	$: if (currentValueString === "0") {
-		waitingForNewValue = true;
+	$: switch (currentValue) {
+		case 0:
+			waitingForNewValue = true;
+			break;
+		case Infinity:
+			waitingForNewValue = true;
+			errorMessage = "Cannot devide by zero";
+			break;
+		default:
+			// NaN is not equal to NaN
+			if (isNaN(currentValue)) {
+				waitingForNewValue = true;
+				errorMessage = "Result is undefined";
+				break;
+			}
 	}
 
 	function clear(): void {
 		currentValueString = "0";
 		previousValue = null;
 		operator = null;
+		waitingForNewValue = true;
+		errorMessage = null;
 	}
 
 	function backSpace(): void {
@@ -25,6 +41,7 @@
 		if (currentValueString === "") {
 			currentValueString = "0";
 		}
+		errorMessage = null;
 	}
 
 	function append(value: string): void {
@@ -37,6 +54,7 @@
 			currentValueString = "";
 		}
 		append(String(value));
+		errorMessage = null;
 	}
 
 	function addDecimal(): void {
@@ -53,14 +71,12 @@
 				currentValueString = String(previousValue + currentValue);
 				break;
 			case "-":
-				// TODO: handle negative numbers
 				currentValueString = String(previousValue - currentValue);
 				break;
 			case "*":
 				currentValueString = String(previousValue * currentValue);
 				break;
 			case "/":
-				// TODO: handle devide by zero
 				currentValueString = String(previousValue / currentValue);
 				break;
 			default:
@@ -68,6 +84,7 @@
 		}
 		operator = null;
 		waitingForNewValue = true;
+		errorMessage = null;
 	}
 
 	function operate(newOperator: Operator): void {
@@ -82,7 +99,7 @@
 
 <div class="calculator">
 	<div class="display">
-		{currentValueString}
+		{errorMessage === null ? currentValueString : errorMessage}
 	</div>
 	<div class="buttons">
 		<button class="large" on:click={clear}>C</button>
