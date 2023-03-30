@@ -8,6 +8,7 @@
 	const getErrorMessage = (displayValue: string): string | null => {
 		switch (displayValue) {
 			case "Infinity":
+			case "-Infinity":
 				return "Cannot devide by zero";
 			case "NaN":
 				return "Result is undefined";
