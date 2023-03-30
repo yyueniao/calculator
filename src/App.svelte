@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Calculator from "./lib/Calculator.svelte";
 	import { onMount } from "svelte";
-	import type { Operation, Operator } from "./types";
+	import type { Operation } from "./types";
 
 	let db: IDBDatabase;
 
