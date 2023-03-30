@@ -73,7 +73,6 @@
 	}
 
 	function calculate(left: number, operator: Operator, right: number): void {
-		// TODO: handle continuous calculation (e.g. keep pressing equal)
 		console.log(`Calculating ${left} ${operator} ${right}`);
 		addTransaction({
 			operand1: left,
@@ -99,7 +98,10 @@
 
 	function handleClickEqual(): void {
 		lastKeystroke = "equal";
-		if (operator) {
+		if (operand2) {
+			operand1 = Number(displayValue);
+			calculate(operand1, operator, operand2);
+		} else if (operator) {
 			operand2 = Number(displayValue);
 			calculate(operand1, operator, operand2);
 		} else {
