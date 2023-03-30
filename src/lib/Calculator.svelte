@@ -29,16 +29,22 @@
 	let operand2: number | null = null;
 
 	let lastKeystroke: "number" | "operator" | "equal" | "others" | null = null;
+	let showRecord = false;
 
 	$: errorMessage = getErrorMessage(displayValue);
 	$: waitingForNewValue =
 		displayValue === "0" ||
 		lastKeystroke === "operator" ||
 		lastKeystroke === "equal";
-
+	$: record = showRecord
+		? `${operand1 ?? ""} ${operator ?? ""} ${operand2 ?? ""} ${
+				operand2 !== null || operator === null ? "=" : ""
+		  }`
+		: " ";
 	function clear(): void {
 		lastKeystroke = "others";
 		displayValue = "0";
+		showRecord = false;
 		operand1 = null;
 		operator = null;
 		operand2 = null;
@@ -47,6 +53,7 @@
 	function backSpace(): void {
 		lastKeystroke = "others";
 		if (waitingForNewValue) {
+			showRecord = false;
 			return;
 		}
 		displayValue = displayValue.slice(0, displayValue.length - 1);
@@ -106,6 +113,7 @@
 		} else {
 			operand1 = Number(displayValue);
 		}
+		showRecord = true;
 	}
 
 	function operate(newOperator: Operator): void {
@@ -124,11 +132,13 @@
 			operator = newOperator;
 			operand2 = null;
 		}
+		showRecord = true;
 	}
 </script>
 
 <div class="calculator">
 	<div class="display">
+		<div class="record">{record}</div>
 		{errorMessage === null ? displayValue : errorMessage}
 	</div>
 	<div class="buttons">
@@ -176,14 +186,22 @@
 		width: 100%;
 		height: 100px;
 		display: flex;
+		flex-direction: column;
 		justify-content: flex-end;
-		align-items: center;
+		align-items: flex-end;
+		gap: 5px;
 		font-size: 36px;
 		font-weight: bold;
 		background-color: #fff;
 		border-radius: 8px;
-		padding: 0 16px;
+		padding: 16px;
 		box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+	}
+
+	.record {
+		font-size: 18px;
+		font-weight: lighter;
+		color: #797979;
 	}
 
 	.buttons {
