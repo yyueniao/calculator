@@ -143,23 +143,68 @@
 	</div>
 	<div class="buttons">
 		<button class="large" on:click={clear}>C</button>
-		<button on:click={backSpace}>&larr;</button>
-		<button class="operator" on:click={() => operate("/")}>÷</button>
-		<button on:click={() => inputDigit(7)}>7</button>
-		<button on:click={() => inputDigit(8)}>8</button>
-		<button on:click={() => inputDigit(9)}>9</button>
-		<button class="operator" on:click={() => operate("*")}>x</button>
-		<button on:click={() => inputDigit(4)}>4</button>
-		<button on:click={() => inputDigit(5)}>5</button>
-		<button on:click={() => inputDigit(6)}>6</button>
-		<button class="operator" on:click={() => operate("-")}>-</button>
-		<button on:click={() => inputDigit(1)}>1</button>
-		<button on:click={() => inputDigit(2)}>2</button>
-		<button on:click={() => inputDigit(3)}>3</button>
-		<button class="operator" on:click={() => operate("+")}>+</button>
-		<button class="large" on:click={() => inputDigit(0)}>0</button>
-		<button on:click={addDecimal}>.</button>
-		<button class="operator" on:click={handleClickEqual}>=</button>
+		<button on:click={backSpace} disabled={errorMessage !== null}
+			>&larr;</button
+		>
+		<button
+			class="operator"
+			on:click={() => operate("/")}
+			disabled={errorMessage !== null}>÷</button
+		>
+		<button on:click={() => inputDigit(7)} disabled={errorMessage !== null}
+			>7</button
+		>
+		<button on:click={() => inputDigit(8)} disabled={errorMessage !== null}
+			>8</button
+		>
+		<button on:click={() => inputDigit(9)} disabled={errorMessage !== null}
+			>9</button
+		>
+		<button
+			class="operator"
+			on:click={() => operate("*")}
+			disabled={errorMessage !== null}>x</button
+		>
+		<button on:click={() => inputDigit(4)} disabled={errorMessage !== null}
+			>4</button
+		>
+		<button on:click={() => inputDigit(5)} disabled={errorMessage !== null}
+			>5</button
+		>
+		<button on:click={() => inputDigit(6)} disabled={errorMessage !== null}
+			>6</button
+		>
+		<button
+			class="operator"
+			on:click={() => operate("-")}
+			disabled={errorMessage !== null}>-</button
+		>
+		<button on:click={() => inputDigit(1)} disabled={errorMessage !== null}
+			>1</button
+		>
+		<button on:click={() => inputDigit(2)} disabled={errorMessage !== null}
+			>2</button
+		>
+		<button on:click={() => inputDigit(3)} disabled={errorMessage !== null}
+			>3</button
+		>
+		<button
+			class="operator"
+			on:click={() => operate("+")}
+			disabled={errorMessage !== null}>+</button
+		>
+		<button
+			class="large"
+			on:click={() => inputDigit(0)}
+			disabled={errorMessage !== null}>0</button
+		>
+		<button on:click={addDecimal} disabled={errorMessage !== null}>.</button
+		>
+		<button
+			class="operator"
+			on:click={handleClickEqual}
+			disabled={errorMessage !== null}>=</button
+		>
 	</div>
 </div>
 
@@ -174,7 +219,7 @@
 		align-items: center;
 		justify-content: space-between;
 		gap: 12px;
-		width: 400px;
+		width: 450px;
 		height: 500px;
 		background-color: rgb(209, 240, 252);
 		border-radius: 12px;
@@ -232,6 +277,12 @@
 
 	button:hover {
 		background-color: #555;
+	}
+
+	button:disabled {
+		background-color: #d6d6d6;
+		cursor: not-allowed;
+		border: 1px solid rgb(98, 80, 80);
 	}
 
 	.operator {
