@@ -120,18 +120,18 @@
 		lastKeystroke = "operator";
 		if (operator === null) {
 			operand1 = Number(displayValue);
-			operator = newOperator;
 		}
 		// make sure the `displayValue` is ready to be used
 		else if (operand2 === null && !waitingForNewValue) {
-			operator = newOperator;
 			operand2 = Number(displayValue);
 			displayValue = calculate(operand1, operator, operand2).toString();
+			operand1 = Number(displayValue);
+			operand2 = null;
 		} else if (operand2 !== null) {
 			operand1 = Number(displayValue);
-			operator = newOperator;
 			operand2 = null;
 		}
+		operator = newOperator;
 		showRecord = true;
 	}
 </script>
