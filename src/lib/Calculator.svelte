@@ -110,11 +110,20 @@
 
 	function operate(newOperator: Operator): void {
 		lastKeystroke = "operator";
-		if (operator && operand1) {
-			displayValue = calculate(operand1, operator, operand2).toString();
+		if (operator === null) {
+			operand1 = Number(displayValue);
+			operator = newOperator;
 		}
-		operator = newOperator;
-		operand1 = Number(displayValue);
+		// make sure the `displayValue` is ready to be used
+		else if (operand2 === null && !waitingForNewValue) {
+			operator = newOperator;
+			operand2 = Number(displayValue);
+			displayValue = calculate(operand1, operator, operand2).toString();
+		} else if (operand2 !== null) {
+			operand1 = Number(displayValue);
+			operator = newOperator;
+			operand2 = null;
+		}
 	}
 </script>
 
