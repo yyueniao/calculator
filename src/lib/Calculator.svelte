@@ -72,7 +72,11 @@
 		}
 	}
 
-	function calculate(left: number, operator: Operator, right: number): void {
+	function calculate(
+		left: number,
+		operator: Operator,
+		right: number
+	): number {
 		console.log(`Calculating ${left} ${operator} ${right}`);
 		addTransaction({
 			operand1: left,
@@ -81,29 +85,24 @@
 		});
 		switch (operator) {
 			case "+":
-				displayValue = String(left + right);
-				break;
+				return left + right;
 			case "-":
-				displayValue = String(left - right);
-				break;
+				return left - right;
 			case "*":
-				displayValue = String(left * right);
-				break;
+				return left * right;
 			case "/":
-				displayValue = String(left / right);
-				break;
+				return left / right;
 		}
-		operator = null;
 	}
 
 	function handleClickEqual(): void {
 		lastKeystroke = "equal";
 		if (operand2) {
 			operand1 = Number(displayValue);
-			calculate(operand1, operator, operand2);
+			displayValue = calculate(operand1, operator, operand2).toString();
 		} else if (operator) {
 			operand2 = Number(displayValue);
-			calculate(operand1, operator, operand2);
+			displayValue = calculate(operand1, operator, operand2).toString();
 		} else {
 			operand1 = Number(displayValue);
 		}
@@ -112,7 +111,7 @@
 	function operate(newOperator: Operator): void {
 		lastKeystroke = "operator";
 		if (operator && operand1) {
-			calculate(operand1, operator, operand2);
+			displayValue = calculate(operand1, operator, operand2).toString();
 		}
 		operator = newOperator;
 		operand1 = Number(displayValue);
