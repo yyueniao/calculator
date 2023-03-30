@@ -3,110 +3,123 @@
 
 	export let addTransaction: (operation: Operation) => void;
 
-	let currentValueString = "0";
-	let previousValue: number | null = null;
-	let operator: Operator | null = null;
-	let waitingForNewValue: boolean = true;
-	let errorMessage: string | null = null;
+	const getErrorMessage = (displayValue: string): string | null => {
+		switch (displayValue) {
+			case "Infinity":
+				return "Cannot devide by zero";
+			case "NaN":
+				return "Result is undefined";
+			default:
+				return null;
+		}
+	};
 
-	$: currentValue = Number(currentValueString);
-	$: switch (currentValue) {
-		case 0:
-			waitingForNewValue = true;
-			break;
-		case Infinity:
-			waitingForNewValue = true;
-			errorMessage = "Cannot devide by zero";
-			break;
-		default:
-			// NaN is not equal to NaN
-			if (isNaN(currentValue)) {
-				waitingForNewValue = true;
-				errorMessage = "Result is undefined";
-				break;
-			}
-	}
+	/**
+	 * never be empty string.
+	 */
+	let displayValue: string = "0";
+
+	/*
+	 * Must obey rules:
+	 * 1. If `operand1` is null, then `operator` should be null.
+	 * 2. If `operator` is null, then `operand2` should be null.
+	 */
+	let operand1: number | null = null;
+	let operator: Operator | null = null;
+	let operand2: number | null = null;
+
+	let lastKeystroke: "number" | "operator" | "equal" | "others" | null = null;
+
+	$: errorMessage = getErrorMessage(displayValue);
+	$: waitingForNewValue =
+		displayValue === "0" ||
+		lastKeystroke === "operator" ||
+		lastKeystroke === "equal";
 
 	function clear(): void {
-		currentValueString = "0";
-		previousValue = null;
+		lastKeystroke = "others";
+		displayValue = "0";
+		operand1 = null;
 		operator = null;
-		waitingForNewValue = true;
-		errorMessage = null;
+		operand2 = null;
 	}
 
 	function backSpace(): void {
-		currentValueString = currentValueString.slice(
-			0,
-			currentValueString.length - 1
-		);
-		if (currentValueString === "") {
-			currentValueString = "0";
+		lastKeystroke = "others";
+		if (waitingForNewValue) {
+			return;
 		}
-		errorMessage = null;
-	}
-
-	function append(value: string): void {
-		currentValueString += value;
-		waitingForNewValue = false;
+		displayValue = displayValue.slice(0, displayValue.length - 1);
+		if (displayValue === "") {
+			displayValue = "0";
+		}
 	}
 
 	function inputDigit(value: number): void {
+		lastKeystroke = "number";
 		if (waitingForNewValue) {
-			currentValueString = "";
+			displayValue = "";
 		}
-		append(String(value));
-		errorMessage = null;
+		displayValue += String(value);
 	}
 
 	function addDecimal(): void {
-		if (!currentValueString.includes(".")) {
-			append(".");
+		if (waitingForNewValue) {
+			displayValue = "0";
+		}
+		if (!displayValue.includes(".")) {
+			displayValue += ".";
 		}
 	}
 
-	function calculate(): void {
+	function calculate(left: number, operator: Operator, right: number): void {
 		// TODO: handle continuous calculation (e.g. keep pressing equal)
-		console.log(`Calculating ${previousValue} ${operator} ${currentValue}`);
+		console.log(`Calculating ${left} ${operator} ${right}`);
 		addTransaction({
+			operand1: left,
 			operator,
-			operand1: previousValue,
-			operand2: currentValue,
+			operand2: right,
 		});
 		switch (operator) {
 			case "+":
-				currentValueString = String(previousValue + currentValue);
+				displayValue = String(left + right);
 				break;
 			case "-":
-				currentValueString = String(previousValue - currentValue);
+				displayValue = String(left - right);
 				break;
 			case "*":
-				currentValueString = String(previousValue * currentValue);
+				displayValue = String(left * right);
 				break;
 			case "/":
-				currentValueString = String(previousValue / currentValue);
-				break;
-			default:
+				displayValue = String(left / right);
 				break;
 		}
 		operator = null;
-		waitingForNewValue = true;
-		errorMessage = null;
+	}
+
+	function handleClickEqual(): void {
+		lastKeystroke = "equal";
+		if (operator) {
+			operand2 = Number(displayValue);
+			calculate(operand1, operator, operand2);
+		} else {
+			operand1 = Number(displayValue);
+		}
 	}
 
 	function operate(newOperator: Operator): void {
-		if (operator && previousValue) {
-			calculate();
+		lastKeystroke = "operator";
+		if (operator && operand1) {
+			calculate(operand1, operator, operand2);
 		}
 		operator = newOperator;
-		previousValue = Number(currentValueString);
-		waitingForNewValue = true;
+		operand1 = Number(displayValue);
 	}
 </script>
 
 <div class="calculator">
 	<div class="display">
-		{errorMessage === null ? currentValueString : errorMessage}
+		{errorMessage === null ? displayValue : errorMessage}
 	</div>
 	<div class="buttons">
 		<button class="large" on:click={clear}>C</button>
@@ -126,7 +139,7 @@
 		<button class="operator" on:click={() => operate("+")}>+</button>
 		<button class="large" on:click={() => inputDigit(0)}>0</button>
 		<button on:click={addDecimal}>.</button>
-		<button class="operator" on:click={calculate}>=</button>
+		<button class="operator" on:click={handleClickEqual}>=</button>
 	</div>
 </div>
 
