@@ -1,5 +1,7 @@
 <script lang="ts">
 	import type { Operation, Operator } from "../types";
+	import DisplayScreen from "./DisplayScreen.svelte";
+	import KeypadButtons from "./KeypadButtons.svelte";
 
 	export let addTransaction: (operation: Operation) => void;
 
@@ -41,6 +43,7 @@
 				operand2 !== null || operator === null ? "=" : ""
 		  }`
 		: " ";
+
 	function clear(): void {
 		lastKeystroke = "others";
 		displayValue = "0";
@@ -62,7 +65,8 @@
 		}
 	}
 
-	function inputDigit(value: number): void {
+	function inputDigit(e: CustomEvent<number>): void {
+		const value = e.detail;
 		lastKeystroke = "number";
 		if (waitingForNewValue) {
 			displayValue = "";
@@ -116,7 +120,8 @@
 		showRecord = true;
 	}
 
-	function operate(newOperator: Operator): void {
+	function operate(e: CustomEvent<Operator>): void {
+		const newOperator = e.detail;
 		lastKeystroke = "operator";
 		if (operator === null) {
 			operand1 = Number(displayValue);
@@ -137,82 +142,19 @@
 </script>
 
 <div class="calculator">
-	<div class="display">
-		<div class="record">{record}</div>
-		{errorMessage === null ? displayValue : errorMessage}
-	</div>
-	<div class="buttons">
-		<button class="large" on:click={clear}>C</button>
-		<button on:click={backSpace} disabled={errorMessage !== null}
-			>&larr;</button
-		>
-		<button
-			class="operator"
-			on:click={() => operate("/")}
-			disabled={errorMessage !== null}>÷</button
-		>
-		<button on:click={() => inputDigit(7)} disabled={errorMessage !== null}
-			>7</button
-		>
-		<button on:click={() => inputDigit(8)} disabled={errorMessage !== null}
-			>8</button
-		>
-		<button on:click={() => inputDigit(9)} disabled={errorMessage !== null}
-			>9</button
-		>
-		<button
-			class="operator"
-			on:click={() => operate("*")}
-			disabled={errorMessage !== null}>x</button
-		>
-		<button on:click={() => inputDigit(4)} disabled={errorMessage !== null}
-			>4</button
-		>
-		<button on:click={() => inputDigit(5)} disabled={errorMessage !== null}
-			>5</button
-		>
-		<button on:click={() => inputDigit(6)} disabled={errorMessage !== null}
-			>6</button
-		>
-		<button
-			class="operator"
-			on:click={() => operate("-")}
-			disabled={errorMessage !== null}>-</button
-		>
-		<button on:click={() => inputDigit(1)} disabled={errorMessage !== null}
-			>1</button
-		>
-		<button on:click={() => inputDigit(2)} disabled={errorMessage !== null}
-			>2</button
-		>
-		<button on:click={() => inputDigit(3)} disabled={errorMessage !== null}
-			>3</button
-		>
-		<button
-			class="operator"
-			on:click={() => operate("+")}
-			disabled={errorMessage !== null}>+</button
-		>
-		<button
-			class="large"
-			on:click={() => inputDigit(0)}
-			disabled={errorMessage !== null}>0</button
-		>
-		<button on:click={addDecimal} disabled={errorMessage !== null}>.</button
-		>
-		<button
-			class="operator"
-			on:click={handleClickEqual}
-			disabled={errorMessage !== null}>=</button
-		>
-	</div>
+	<DisplayScreen {record} {errorMessage} {displayValue} />
+	<KeypadButtons
+		disableOperation={errorMessage !== null}
+		on:clear={clear}
+		on:backspace={backSpace}
+		on:clickOperator={operate}
+		on:inputDigit={inputDigit}
+		on:addDecimal={addDecimal}
+		on:clickEqual={handleClickEqual}
+	/>
 </div>
 
 <style>
-	* {
-		box-sizing: border-box;
-	}
-
 	.calculator {
 		display: flex;
 		flex-direction: column;
@@ -225,71 +167,5 @@
 		border-radius: 12px;
 		padding: 20px;
 		box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
-	}
-
-	.display {
-		width: 100%;
-		height: 100px;
-		display: flex;
-		flex-direction: column;
-		justify-content: flex-end;
-		align-items: flex-end;
-		gap: 5px;
-		font-size: 36px;
-		font-weight: bold;
-		background-color: #fff;
-		border-radius: 8px;
-		padding: 16px;
-		box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-	}
-
-	.record {
-		font-size: 18px;
-		font-weight: lighter;
-		color: #797979;
-	}
-
-	.buttons {
-		display: grid;
-		grid-template-columns: repeat(4, 1fr);
-		grid-template-rows: repeat(5, 1fr);
-		grid-gap: 8px;
-		height: 300px;
-		width: 100%;
-	}
-
-	button {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		border: 1px solid transparent;
-		width: 100%;
-		height: 100%;
-		font-size: 24px;
-		font-weight: bold;
-		border-radius: 8px;
-		color: #fff;
-		background-color: #333;
-		cursor: pointer;
-		box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-		transition: all 0.2s ease-in-out;
-	}
-
-	button:hover {
-		background-color: #555;
-	}
-
-	button:disabled {
-		background-color: #d6d6d6;
-		cursor: not-allowed;
-		border: 1px solid rgb(98, 80, 80);
-	}
-
-	.operator {
-		background-color: #ff9500;
-	}
-
-	.large {
-		grid-column: 1 / span 2;
 	}
 </style>
