@@ -1,11 +1,7 @@
 <script lang="ts">
-	import type { Operator } from "../types";
+	import type { Operation, Operator } from "../types";
 
-	export let addTransaction: (
-		operator: Operator,
-		operand1: number,
-		operand2: number
-	) => void;
+	export let addTransaction: (operation: Operation) => void;
 
 	let currentValueString = "0";
 	let previousValue: number | null = null;
@@ -72,7 +68,11 @@
 	function calculate(): void {
 		// TODO: handle continuous calculation (e.g. keep pressing equal)
 		console.log(`Calculating ${previousValue} ${operator} ${currentValue}`);
-		addTransaction(operator, previousValue, currentValue);
+		addTransaction({
+			operator,
+			operand1: previousValue,
+			operand2: currentValue,
+		});
 		switch (operator) {
 			case "+":
 				currentValueString = String(previousValue + currentValue);

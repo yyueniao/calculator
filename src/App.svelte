@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Calculator from "./lib/Calculator.svelte";
 	import { onMount } from "svelte";
-	import type { Operator } from "./types";
+	import type { Operation, Operator } from "./types";
 
 	let db: IDBDatabase;
 
@@ -21,7 +21,7 @@
 		request.onsuccess = () => {
 			db = request.result;
 			console.log("database created successfully.");
-			
+
 			db.onerror = () => {
 				console.error("Error from IndexedDB: ", request.error);
 			};
@@ -34,11 +34,7 @@
 		return objectStore.count();
 	}
 
-	function addTransaction(
-		operator: Operator,
-		operand1: number,
-		operand2: number
-	) {
+	function addTransaction({ operator, operand1, operand2 }: Operation) {
 		let operationNo: number | null = null;
 		const countRequest = getCount();
 		countRequest.onsuccess = () => {
